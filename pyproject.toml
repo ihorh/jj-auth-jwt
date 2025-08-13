@@ -1,0 +1,29 @@
+[project]
+name = "jj-auth-jwt"
+version = "0.0.1"
+description = "Collection of hand-crafte auth helpers"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = []
+
+[tool.uv.workspace]
+members = ["libs/*"]
+
+[tool.uv.sources]
+jj-jwt-token-factory = { workspace = true }
+
+
+[tool.ruff.lint]
+select = ["ALL"]
+# ignore = ["D100", "D101", "D102", "D103", "D105", "D107"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/*" = ["INP001", "T201", "ANN201", "S101"]
+
+[tool.ruff]
+line-length = 120
+
+[tool.pytest.ini_options]
+addopts = "-rA -q"
+asyncio_default_fixture_loop_scope = "module"
+asyncio_mode = "auto"
