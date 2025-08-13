@@ -20,8 +20,8 @@ class BaseIdentifiedUserInfo:
     id_provider: UserIdentificationProvider
     id_issuer: str  # assume there can be different isssuers from same provider
     user_id: str
-    email: str  # TODO| None
-    email_verified: bool  # TODO| None
+    email: str  # TODO (ihor): | None
+    email_verified: bool  # TODO (ihor): | None
     display_name: str | None
     first_name: str | None
     last_name: str | None

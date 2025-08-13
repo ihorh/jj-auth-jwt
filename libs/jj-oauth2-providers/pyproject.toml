@@ -1,0 +1,26 @@
+[project]
+name = "jj-oauth2-providers"
+version = "0.0.1"
+description = "OAuth2 Providers"
+readme = "README.md"
+authors = [
+    { name = "ihor", email = "Ihor.Halaniuk@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "authlib>=1.6.1",
+    "jj-jwt-token-factory",
+]
+
+[build-system]
+requires = ["uv_build>=0.8.4,<0.9.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
+    "types-authlib>=1.6.0.20250809",
+]
+
+[tool.uv.sources]
+jj-jwt-token-factory = { workspace = true }

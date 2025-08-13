@@ -2,7 +2,7 @@
 
 import random
 import sys
-from collections.abc import Iterable, MutableSequence, Sequence
+from collections.abc import Iterable, Mapping, MutableSequence, Sequence
 from datetime import UTC, datetime, timedelta
 from enum import StrEnum, auto
 from typing import Any, Final
@@ -55,15 +55,15 @@ class JwtTokenFactory:
     _ALG_HS256: Final = "HS256"
     _ALG_RS256: Final = "RS256"
 
-    EXP_15_MINS: dict[JwtTokenExpType, timedelta] = {JwtTokenExpType.DEFAULT: timedelta(minutes=15)}
+    EXP_15_MINS: Mapping[JwtTokenExpType, timedelta] = {JwtTokenExpType.DEFAULT: timedelta(minutes=15)}
 
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         *,
         secret_key: RSAPrivateKey | str,
         algorithm: str,
         issuer: str,
-        tokens_exp: dict[JwtTokenExpType, timedelta] = EXP_15_MINS.copy(),
+        tokens_exp: dict[JwtTokenExpType, timedelta] = EXP_15_MINS,
         dec_require_claims: Sequence[JwtClaimsUnion] = [*JwtClaimsStd],
         enc_extra_claims: dict[JwtClaimsUnion, Any] | None = None,
         dec_extra_claims: dict[JwtClaimsUnion, Any] | None = None,
@@ -102,7 +102,7 @@ class JwtTokenFactory:
                 JwtClaimsStd.EXP: issued_at + self._access_token_ttl_min,
                 JwtClaimsStd.JTI: random.randint(0, sys.maxsize),  # noqa: S311 TODO: consider better random
                 JwtClaimsPrv.A5C_TOKEN_TYPE: token_type,
-            }
+            },
         )
         return payload
 
@@ -133,7 +133,7 @@ class JwtTokenFactory:
         return "not_implemented"
 
     def validate_access_token(
-        self, access_token: str, aud: str | Iterable[str] | None = None
+        self, access_token: str, aud: str | Iterable[str] | None = None,
     ) -> dict[JwtClaimsUnion, Any]:
         """Decode and validate access token.
 
@@ -155,7 +155,7 @@ class JwtTokenFactory:
             LOG.warning("JWT token decode error: %s", e.args)
             raise JwtInvalidTokenError(*e.args) from e
 
-    def _validate_extra_claims(self, payload: Any):
+    def _validate_extra_claims(self, payload: Any) -> None:
         if self._dec_extra_claims is None:
             return
         for k, v in self._dec_extra_claims.items():
@@ -206,8 +206,8 @@ class JwtTokenFactory:
             algorithm == cls._ALG_RS256 and isinstance(key, RSAPrivateKey)
         ):
             return key
-        else:
-            raise RuntimeError(f"invalid key for algorith {algorithm}")
+        msg = f"invalid key for algorith {algorithm}"
+        raise RuntimeError(msg)
 
     def _jwt_decode_secret_key(self) -> RSAPublicKey | str:
         key = self._enc_secret_key
@@ -215,4 +215,5 @@ class JwtTokenFactory:
             return key
         if self._algorithm == self._ALG_RS256 and isinstance(key, RSAPrivateKey):
             return key.public_key()
-        raise RuntimeError(f"invalid key for algorith {self._algorithm}")
+        msg = f"invalid key for algorith {self._algorithm}"
+        raise RuntimeError(msg)

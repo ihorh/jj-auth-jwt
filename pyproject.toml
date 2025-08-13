@@ -4,24 +4,31 @@ version = "0.0.1"
 description = "Collection of hand-crafte auth helpers"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "jj-jwt-token-factory",
+    "jj-oauth2-providers",
+]
 
 [tool.uv.workspace]
 members = ["libs/*"]
 
 [tool.uv.sources]
 jj-jwt-token-factory = { workspace = true }
+jj-oauth2-providers = { workspace = true }
 
 
 [tool.ruff.lint]
 select = ["ALL"]
-# ignore = ["D100", "D101", "D102", "D103", "D105", "D107"]
+ignore = ["D100", "D101", "D102", "D103", "D104", "D105", "D107", "TD003"]
 
 [tool.ruff.lint.per-file-ignores]
 "**/tests/*" = ["INP001", "T201", "ANN201", "S101"]
 
 [tool.ruff]
 line-length = 120
+
+[tool.pyright]
+typeCheckingMode = "basic"
 
 [tool.pytest.ini_options]
 addopts = "-rA -q"
